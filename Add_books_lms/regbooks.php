@@ -1,5 +1,6 @@
 <?php
-    session_start();
+    require_once __DIR__ . '/../aurora_auth.php';
+    require_once __DIR__ . '/../admin_auth_check.php';
     $connection = mysqli_connect("localhost","root","");
     $db = mysqli_select_db($connection,"lms");
     $book_name = "";

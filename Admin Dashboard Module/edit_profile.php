@@ -1,76 +1,63 @@
 <?php
-    require("functions.php");
-    session_start();
-    #fetch data from database
-    $connection = mysqli_connect("localhost","root","");
-    $db = mysqli_select_db($connection,"lms");
-    $name = "";
-    $email = "";
-    $mobile = "";
-    $query = "select * from admins where email = '$_SESSION[email]'";
-    $query_run = mysqli_query($connection,$query);
-    while ($row = mysqli_fetch_assoc($query_run)){
-        $name = $row['name'];
-        $email = $row['email'];
-        $mobile = $row['mobile'];
-    }
+    require_once __DIR__ . '/../aurora_auth.php';
+    require_once __DIR__ . '/../admin_auth_check.php';
+    require_once __DIR__ . '/../aurora_db.php';
+
+    $flash = $_SESSION['_flash'] ?? null;
+    unset($_SESSION['_flash']);
+
+    $row = aurora_fetch_one(
+        'SELECT name, email, mobile FROM admins WHERE id = ? LIMIT 1',
+        'i',
+        [(int)($_SESSION['id'] ?? 0)]
+    ) ?: ['name' => $_SESSION['name'] ?? '', 'email' => $_SESSION['email'] ?? '', 'mobile' => ''];
+
+    $current = basename($_SERVER['SCRIPT_NAME']);
+    require __DIR__ . '/_admin_sidebar.php';
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Dashboard</title>
-    <meta charset="utf-8" name="viewport" content="width=device-width,intial-scale=1">
+    <title>Edit Admin Profile — Aurora Library</title>
+    <meta charset="utf-8" name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
     <link rel="stylesheet" type="text/css" href="../bootstrap-4.4.1/css/bootstrap.min.css">
       <script type="text/javascript" src="../bootstrap-4.4.1/js/juqery_latest.js"></script>
       <script type="text/javascript" src="../bootstrap-4.4.1/js/bootstrap.min.js"></script>
+      <link rel="stylesheet" href="../static/css/aurora.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="admin_dashboard.php">Library Management System (LMS)</a>
-            </div>
-            <font style="color: white"><span><strong>Welcome: <?php echo $_SESSION['name'];?></strong></span></font>
-            <font style="color: white"><span><strong>Email: <?php echo $_SESSION['email'];?></strong></font>
-            <ul class="nav navbar-nav navbar-right">
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" data-toggle="dropdown">My Profile </a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="">View Profile</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Edit Profile</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="change_password.php">Change Password</a>
-                </div>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="../logout.php">Logout</a>
-              </li>
-            </ul>
-        </div>
-    </nav><br>
-    <span><marquee>This is library mangement system. Library opens at 8:00 AM and close at 8:00 PM</marquee></span><br><br>
-        <center><h4>Admin Profile Detail</h4><br></center>
-        <div class="row">
-            <div class="col-md-4"></div>
-            <div class="col-md-4">
+<div class="app-shell">
+    <?php render_admin_sidebar($current); ?>
+    <main class="app-main" id="app-main">
+        <?php render_admin_header('Edit Admin Profile'); ?>
+        <div style="max-width:640px;margin:0 auto;">
+            <div class="card-bordered">
+                <?php if ($flash): ?>
+                    <div class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : 'danger'; ?>">
+                        <?php echo htmlspecialchars($flash['msg']); ?>
+                    </div>
+                <?php endif; ?>
                 <form action="update.php" method="post">
+                    <?php echo aurora_csrf_field(); ?>
                     <div class="form-group">
-                        <label for="name">Name:</label>
-                        <input type="text" class="form-control" name="name" value="<?php echo $name;?>">
+                        <label>Name</label>
+                        <input type="text" class="form-control" name="name" value="<?php echo htmlspecialchars($row['name'] ?? ''); ?>" required>
                     </div>
                     <div class="form-group">
-                        <label for="email">Email:</label>
-                        <input type="text" name="email" class="form-control" value="<?php echo $email;?>">
+                        <label>Email</label>
+                        <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($row['email'] ?? ''); ?>" required>
                     </div>
                     <div class="form-group">
-                        <label for="mobile">Mobile:</label>
-                        <input type="text" name="mobile" class="form-control" value="<?php echo $mobile;?>">
+                        <label>Mobile</label>
+                        <input type="text" name="mobile" class="form-control" value="<?php echo htmlspecialchars($row['mobile'] ?? ''); ?>">
                     </div>
                     <button type="submit" name="update" class="btn btn-primary">Update</button>
+                    <a href="view_profile.php" class="btn btn-default">Cancel</a>
                 </form>
             </div>
-            <div class="col-md-4"></div>
         </div>
+    </main>
+</div>
+<script src="../static/js/aurora.js"></script>
 </body>
 </html>
