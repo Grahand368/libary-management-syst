@@ -1,0 +1,764 @@
+/* ==========================================================================
+   Aurora Library — Global Stylesheet
+   --------------------------------------------------------------------------
+   Goals:
+   - Sane box-sizing across the entire site
+   - No horizontal page overflow on small screens
+   - Consistent background, no color seams when scrolling
+   - Responsive dashboard grid
+   - Responsive tables via .table-responsive wrappers
+   - Collapsible sidebar drawer on mobile, fixed on desktop
+   - Bootstrap-friendly: only adds / overrides
+   - Modern, clean, professional — every page renders the same
+   ========================================================================== */
+
+:root {
+    --ink-50:  #f4f6f9;
+    --ink-100: #e5e9ee;
+    --ink-200: #d8dde4;
+    --ink-300: #b7c0cb;
+    --ink-400: #8a95a3;
+    --ink-500: #5a6573;
+    --ink-600: #3b4754;
+    --ink-700: #2c3e50;
+    --ink-800: #1c2833;
+    --ink-900: #111827;
+
+    --emerald-500: #16a085;
+    --emerald-700: #0f4d2c;
+    --crimson-500: #c0392b;
+    --crimson-700: #7f1d1d;
+    --amber-500:   #b7950b;
+    --amber-700:   #7d6608;
+    --blue-500:    #2980b9;
+    --blue-700:    #1f4e79;
+    --purple-500:  #6c5ce7;
+    --purple-700:  #3b3270;
+    --teal-500:    #008b8b;
+    --teal-700:    #005353;
+    --gold-500:    #d4a85c;
+    --gold-700:    #8a6a2c;
+
+    --shadow-sm:  0 2px 6px rgba(0,0,0,0.04);
+    --shadow:     0 6px 16px rgba(0,0,0,0.06);
+    --shadow-md:  0 10px 24px rgba(0,0,0,0.08);
+    --shadow-lg:  0 18px 40px rgba(0,0,0,0.10);
+
+    --radius-sm:  8px;
+    --radius:     12px;
+    --radius-lg:  16px;
+
+    --transition: .15s ease;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    /* Avoid 100vw (causes horizontal scroll on mobile when scrollbar appears) */
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                 "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink-700);
+    background-color: var(--ink-50);
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 { color: var(--ink-700); font-weight: 700; }
+p, small, label, li, span, td, th { word-break: break-word; }
+
+a { color: var(--blue-500); }
+a:hover { color: var(--blue-700); text-decoration: underline; }
+
+img, video { max-width: 100%; height: auto; }
+
+/* ---------- Layout shell ----------------------------------------------- */
+
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background-color: var(--ink-50);
+    align-items: stretch;
+}
+
+.app-sidebar {
+    width: 260px;
+    flex: 0 0 260px;
+    background-color: #1c2833;
+    background-image: linear-gradient(180deg, #2c3e50 0%, #1c2833 100%);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    color: #ecf0f1;
+    min-height: 100vh;
+    height: 100%;
+    padding: 18px 14px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    align-self: stretch;
+    z-index: 1030;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.app-sidebar a {
+    color: #ecf0f1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    margin-bottom: 4px;
+    font-size: 14px;
+    transition: background var(--transition), color var(--transition);
+}
+.app-sidebar a:hover,
+.app-sidebar a.active {
+    background: rgba(255,255,255,0.10);
+    color: #fff;
+    text-decoration: none;
+}
+.app-sidebar .brand {
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 14px;
+    color: #fff;
+    letter-spacing: 0.3px;
+    padding: 4px 6px 0;
+}
+.app-sidebar .section-label {
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: #95a5a6;
+    margin: 12px 6px 4px;
+}
+
+.app-main {
+    flex: 1 1 auto;
+    min-width: 0;            /* prevent flex overflow */
+    background-color: var(--ink-50);
+    padding: 18px;
+    width: 100%;
+}
+
+.app-header {
+    background: #ffffff;
+    border-bottom: 1px solid var(--ink-100);
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    position: fixed;
+    justify-content: space-between;
+    gap: 12px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 18px;
+}
+
+.app-header .header-title {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--ink-700);
+}
+
+.menu-toggle {
+    display: none;
+    background: var(--ink-700);
+    color: #fff;
+    border: 0;
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+}
+.menu-toggle:hover { background: var(--ink-800); }
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1020;
+}
+
+body.sidebar-open .sidebar-overlay { display: block; }
+body.sidebar-open { overflow: hidden; }
+
+/* ---------- Dashboard grids & stat cards ----------------------------- */
+
+.dash-grid,
+.dash-grid-2,
+.dash-grid-3,
+.dash-grid-4,
+.dash-grid-5 {
+    display: grid;
+    gap: 14px;
+    width: 100%;
+    margin-bottom: 14px;
+}
+.dash-grid    { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.dash-grid-3  { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.dash-grid-4  { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.dash-grid-5  { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+.dash-grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.stat-card {
+    padding: 18px 20px;
+    border-radius: var(--radius);
+    color: #fff;
+    min-height: 108px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    word-wrap: break-word;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.stat-card h2    { margin: 4px 0 0; font-size: 26px; font-weight: 700; }
+.stat-card small { opacity: .9; font-size: 12px; letter-spacing: .3px; }
+.stat-card a     { color: #fff; text-decoration: underline; opacity: .95; }
+.stat-card a:hover { color: #fff; opacity: 1; }
+
+.stat-blue   { background: linear-gradient(135deg,#2980b9,#1f4e79); }
+.stat-green  { background: linear-gradient(135deg,#16a085,#0f4d2c); }
+.stat-amber  { background: linear-gradient(135deg,#b7950b,#7d6608); }
+.stat-red    { background: linear-gradient(135deg,#c0392b,#7f1d1d); }
+.stat-purple { background: linear-gradient(135deg,#6c5ce7,#3b3270); }
+.stat-grey   { background: linear-gradient(135deg,#34495e,#1c2833); }
+.stat-teal   { background: linear-gradient(135deg,#008b8b,#005353); }
+.stat-pink   { background: linear-gradient(135deg,#c2437c,#7a1d4a); }
+
+/* Semantic aliases for fine-status stats. */
+.stat-unpaid { background: linear-gradient(135deg,#c0392b,#7f1d1d); }
+.stat-paid   { background: linear-gradient(135deg,#16a085,#0f4d2c); }
+.stat-waived { background: linear-gradient(135deg,#2980b9,#1f4e79); }
+.stat-total  { background: linear-gradient(135deg,#2c3e50,#1c2833); }
+
+/* ---------- Quick-action tiles ------------------------------------------ */
+
+.quick-actions {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+.quick-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 12px;
+    border-radius: var(--radius);
+    background: #fff;
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    color: var(--ink-700);
+    font-weight: 600;
+    text-align: center;
+    transition: transform var(--transition), box-shadow var(--transition);
+    word-break: break-word;
+}
+.quick-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    color: var(--ink-800);
+    text-decoration: none;
+}
+
+/* ---------- Section title bar ------------------------------------------- */
+
+.section-title {
+    margin: 20px 0 10px;
+    font-weight: 700;
+    color: var(--ink-700);
+    border-left: 4px solid var(--ink-700);
+    padding-left: 10px;
+    font-size: 16px;
+}
+
+/* ---------- Cards / panels ---------------------------------------------- */
+
+.card-bordered {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px;
+    border: 1px solid var(--ink-100);
+}
+
+.card-bordered h5,
+.card-bordered h4,
+.card-bordered h3 { margin-top: 0; }
+
+/* ---------- Tables (responsive wrapper) --------------------------------- */
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--ink-100);
+}
+
+.table-responsive table,
+table.aurora-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+    background: #fff;
+}
+
+.aurora-table thead th,
+.table-responsive thead th {
+    background: var(--ink-50);
+    color: var(--ink-600);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: .8px;
+    font-weight: 700;
+    padding: 12px;
+    border-bottom: 1px solid var(--ink-200);
+    white-space: nowrap;
+}
+
+.aurora-table tbody tr,
+.table-responsive tbody tr {
+    transition: background var(--transition);
+}
+
+.aurora-table tbody tr:nth-child(even),
+.table-responsive tbody tr:nth-child(even) {
+    background: rgba(0,0,0,0.015);
+}
+
+.aurora-table tbody tr:hover,
+.table-responsive tbody tr:hover {
+    background: rgba(41,128,185,0.06);
+}
+
+.aurora-table td,
+.aurora-table th,
+.table-responsive td,
+.table-responsive th {
+    padding: 12px;
+    vertical-align: middle;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--ink-100);
+    color: var(--ink-700);
+    font-size: 14px;
+}
+.aurora-table td.wrap,
+.aurora-table th.wrap,
+.table-responsive td.wrap,
+.table-responsive th.wrap { white-space: normal; }
+
+.aurora-table tbody tr:last-child td,
+.table-responsive tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.aurora-table tfoot td,
+.table-responsive tfoot td {
+    background: var(--ink-50);
+    border-top: 1px solid var(--ink-200);
+    font-weight: 600;
+}
+
+.empty-row {
+    text-align: center;
+    color: var(--ink-400);
+    padding: 24px 0 !important;
+    font-style: italic;
+}
+
+/* ---------- Badges ------------------------------------------------------- */
+
+.aurora-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+.aurora-badge-success { background: #d4edda; color: #155724; }
+.aurora-badge-warning { background: #fff3cd; color: #856404; }
+.aurora-badge-danger  { background: #f8d7da; color: #721c24; }
+.aurora-badge-info    { background: #d1ecf1; color: #0c5460; }
+.aurora-badge-muted   { background: var(--ink-100); color: var(--ink-500); }
+.aurora-badge-purple  { background: #e2d7f9; color: #3b3270; }
+.aurora-badge-amber   { background: #fff3cd; color: #856404; }
+
+/* Inline pill for quantities / numerics */
+.qty-pill {
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+    display: inline-block;
+    min-width: 42px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+}
+.qty-pill.success { background: #d4edda; color: #155724; }
+.qty-pill.warning { background: #fff3cd; color: #856404; }
+.qty-pill.danger  { background: #f8d7da; color: #721c24; }
+
+.price-cell { white-space: nowrap; }
+
+/* Catalog/table-with-actions specific overrides */
+.table-catalog th { white-space: nowrap; }
+.table-catalog td { vertical-align: middle; }
+
+/* Form layout helpers used on the suggestion form */
+.suggest-card {
+    max-width: 720px;
+    margin: 24px auto;
+    background: #fff;
+    padding: 28px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--ink-100);
+}
+.suggest-card h2 { margin-top: 0; }
+
+.info-banner {
+    background: #fef9e7;
+    border: 1px solid #f1c40f;
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    color: #7d6608;
+    margin-bottom: 16px;
+}
+
+.help-text { color: #7f8c8d; font-size: 12px; margin-top: 4px; }
+
+/* ---------- Filter bar --------------------------------------------------- */
+
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px 0;
+}
+.filter-bar a {
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    color: var(--ink-700);
+    text-decoration: none;
+    background: #fff;
+    border: 1px solid var(--ink-200);
+    font-size: 13px;
+    transition: background var(--transition), color var(--transition);
+}
+.filter-bar a:hover { background: var(--ink-50); }
+.filter-bar a.active {
+    background: var(--ink-700);
+    color: #fff;
+    border-color: var(--ink-700);
+}
+
+/* Inline mini-tab-bar used in admin request pages (Active / History) */
+.tab-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 10px 0;
+}
+.tab-bar a {
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    color: var(--ink-700);
+    background: #fff;
+    border: 1px solid var(--ink-200);
+    text-decoration: none;
+    font-size: 13px;
+}
+.tab-bar a.active {
+    background: var(--ink-700);
+    color: #fff;
+    border-color: var(--ink-700);
+}
+
+/* Small status counters (book/purchase request counts) */
+.stat-mini {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    margin-right: 8px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1.2;
+}
+.stat-mini.pending   { background: var(--amber-500); }
+.stat-mini.approved  { background: var(--emerald-500); }
+.stat-mini.declined  { background: var(--crimson-500); }
+.stat-mini.cancelled { background: #7f8c8d; }
+.stat-mini.purchased { background: var(--emerald-500); }
+
+/* ---------- Form controls (light overrides) ------------------------------ */
+
+.form-control,
+.form-control:focus,
+input[type="text"]:not(.btn):not([class*="btn"]),
+input[type="email"]:not(.btn):not([class*="btn"]),
+input[type="password"]:not(.btn):not([class*="btn"]),
+input[type="number"]:not(.btn):not([class*="btn"]),
+input[type="search"]:not(.btn):not([class*="btn"]),
+input[type="date"]:not(.btn):not([class*="btn"]),
+input[type="datetime-local"]:not(.btn):not([class*="btn"]),
+select:not(.btn):not([class*="btn"]),
+textarea:not(.btn):not([class*="btn"]) {
+    border-radius: var(--radius-sm);
+    border-color: var(--ink-200);
+    color: var(--ink-700);
+    background-color: #fff;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+.form-control:focus,
+input:focus:not(.btn):not([class*="btn"]),
+select:focus:not(.btn):not([class*="btn"]),
+textarea:focus:not(.btn):not([class*="btn"]) {
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 3px rgba(41,128,185,0.18);
+    outline: 0;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--ink-700);
+    margin-bottom: 4px;
+    display: block;
+}
+
+.form-inline { gap: 8px; }
+
+/* ---------- Buttons (small refinements that work with bootstrap) -------- */
+
+.btn { border-radius: var(--radius-sm); transition: transform var(--transition); }
+.btn:focus { box-shadow: 0 0 0 3px rgba(41,128,185,0.18); }
+.btn-sm   { padding: 4px 10px; font-size: 12px; }
+.btn-lg   { padding: 10px 18px; font-size: 16px; }
+
+.actions-cell {
+    min-width: 220px;
+    white-space: nowrap;
+}
+.actions-cell form { display: inline-block; margin: 2px; }
+
+.amount-edit-form { display: inline-flex; gap: 4px; align-items: center; }
+.amount-edit-form input[type=number] { width: 90px; }
+
+/* ---------- Activity feed / list ----------------------------------------- */
+
+.feed-icon {
+    flex: 0 0 36px; height: 36px; border-radius: 50%;
+    display: grid; place-items: center; color: #fff; font-size: 16px;
+}
+.feed-icon.issued   { background: var(--blue-500); }
+.feed-icon.request  { background: var(--amber-500); }
+.feed-icon.fine     { background: var(--crimson-500); }
+.feed-icon.suggest  { background: var(--purple-500); }
+
+.feed-row {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 0; border-bottom: 1px solid var(--ink-100);
+}
+.feed-row:last-child { border-bottom: none; }
+.feed-title { font-weight: 600; color: var(--ink-700); }
+.feed-meta  { font-size: 12px; color: var(--ink-500); margin-top: 2px; }
+
+/* ---------- Days-late highlight ----------------------------------------- */
+
+.days-late-cell { color: var(--crimson-500); font-weight: 700; }
+.row-overdue td { background: #fff5f5 !important; }
+.row-deleted    { opacity: 0.55; }
+
+/* ---------- Alert / toast (page-level) ---------------------------------- */
+
+.aurora-alert {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    border-left: 4px solid;
+    background: #fff;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-sm);
+    font-size: 14px;
+}
+.aurora-alert-success { border-color: var(--emerald-500); background: #f0faf6; color: #0f4d2c; }
+.aurora-alert-error,
+.aurora-alert-danger  { border-color: var(--crimson-500); background: #fdf1f1; color: #7f1d1d; }
+.aurora-alert-warning { border-color: var(--amber-500);  background: #fff8e3; color: #7d6608; }
+.aurora-alert-info    { border-color: var(--blue-500);   background: #eef5fb; color: #1f4e79; }
+
+/* ---------- Auth (login) panels — preserve existing aurora look --------- */
+
+.app-bg {
+    background-color: var(--ink-50);
+    background-image:
+        radial-gradient(circle at 0% 0%, rgba(212,168,92,0.08), transparent 40%),
+        radial-gradient(circle at 100% 100%, rgba(41,128,185,0.08), transparent 40%);
+    min-height: 100vh;
+}
+
+/* ---------- Page toolbar -------------------------------------------------- */
+
+.page-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.text-muted { color: var(--ink-500) !important; }
+.text-success { color: var(--emerald-500) !important; }
+.text-danger  { color: var(--crimson-500) !important; }
+.text-warning { color: var(--amber-500) !important; }
+
+/* ---------- Breakpoints ------------------------------------------------- */
+
+/* Tablet up — keep sidebar visible */
+@media (min-width: 992px) {
+    .menu-toggle { display: none !important; }
+    .app-main { margin-left: 260px; }
+    .app-header { left: 260px; }
+}
+
+/* Tablet (768) — sidebar collapses into drawer */
+@media (max-width: 991.98px) {
+    .app-shell { flex-direction: column; }
+
+    .app-sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 260px;
+        transform: translateX(-100%);
+        transition: transform .25s ease;
+        height: 100vh;
+        min-height: 100vh;
+        z-index: 1030;
+    }
+    body.sidebar-open .app-sidebar { transform: translateX(0); }
+
+    .menu-toggle { display: inline-block; }
+
+    .app-main { padding: 14px; width: 100%; }
+}
+
+/* Phone (<= 576 small) — tighter everywhere */
+@media (max-width: 575.98px) {
+    .stat-card h2 { font-size: 22px; }
+    .app-main { padding: 10px; }
+    .app-header { padding: 10px 12px; }
+    .quick-actions { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+    .table-responsive th,
+    .table-responsive td,
+    .aurora-table th,
+    .aurora-table td { padding: 8px 10px; font-size: 13px; }
+    .actions-cell { white-space: normal; }
+}
+
+/* Ultra-small phones (>= 320) — never overflow */
+@media (max-width: 360px) {
+    .stat-card h2 { font-size: 20px; }
+    .app-header .header-title { font-size: 16px; }
+}
+
+/* Wide screens (1440) — keep things readable */
+@media (min-width: 1440px) {
+    .app-main { padding: 24px 32px; }
+    .dash-grid,
+    .dash-grid-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+}
+
+/* ---------- Print (best effort) ----------------------------------------- */
+@media print {
+    .app-sidebar, .menu-toggle, .sidebar-overlay { display: none !important; }
+    .app-main { padding: 0; }
+}
+
+/* ---------- Toasts (floating + inline) ---------------------------------- */
+
+[data-toast-host] {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 1080;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: min(420px, calc(100vw - 36px));
+}
+
+.aurora-toast {
+    background: var(--ink-700);
+    color: #fff;
+    padding: 12px 36px 12px 16px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    font-size: 14px;
+    line-height: 1.4;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity .2s, transform .2s;
+    word-break: break-word;
+}
+.aurora-toast.is-visible { opacity: 1; transform: translateY(0); }
+.aurora-toast.is-hiding  { opacity: 0; transform: translateY(-8px); }
+
+.aurora-toast--success { background: var(--emerald-500); }
+.aurora-toast--error   { background: var(--crimson-500); }
+.aurora-toast--info    { background: var(--blue-500); }
+.aurora-toast--warning { background: var(--amber-500); }
+
+.aurora-toast__close {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    background: transparent;
+    border: 0;
+    color: #fff;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+    opacity: .85;
+}
+.aurora-toast__close:hover { opacity: 1; }
+
+/* Make the inline [data-toast] banners look like banners too, with the
+   same dismiss mechanism the floating toasts use. */
+[data-toast] {
+    cursor: default;
+    position: relative;
+}

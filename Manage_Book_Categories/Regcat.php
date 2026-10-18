@@ -1,9 +1,9 @@
 <?php
-    session_start();
-    #fetch data from database
-    $connection = mysqli_connect("localhost","root","");
-    $db = mysqli_select_db($connection,"lms");
-    $query = "select * from category";
+    
+    require_once __DIR__ . '/../admin_auth_check.php';
+    require_once __DIR__ . '/../aurora_db.php';
+    $connection = aurora_db();
+    $query = "SELECT cat_name FROM category ORDER BY cat_name";
     $cat_name = "";
 ?>
 <!DOCTYPE html>

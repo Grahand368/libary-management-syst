@@ -1,6 +1,8 @@
 <?php
-    require("functions.php");
-    session_start();
+    require_once __DIR__ . '/../aurora_auth.php';
+    require_once __DIR__ . '/../aurora_db.php';
+    require_once __DIR__ . '/../aurora_error.php';
+    require_once __DIR__ . '/../admin_auth_check.php';
     #fetch data from database
     $connection = mysqli_connect("localhost","root","");
     $db = mysqli_select_db($connection,"lms");
@@ -14,6 +16,13 @@
         $email = $row['email'];
         $mobile = $row['mobile'];
     }
+
+    $flash = aurora_flash_pull();
+    if (!$flash && !empty($_SESSION['_flash'])) {
+        $flash = $_SESSION['_flash'];
+        unset($_SESSION['_flash']);
+    }
+    $csrf = aurora_csrf_token();
 ?>
 <!DOCTYPE html>
 <html>
@@ -73,17 +82,17 @@
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown">Category </a>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="add_cat.php">Add New Category</a>
+                    <a class="dropdown-item" href="../Manage_Book_Categories/add_cat.php">Add New Category</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="manage_cat.php">Manage Category</a>
+                    <a class="dropdown-item" href="../Manage_Book_Categories/manage_cat.php">Manage Category</a>
                 </div>
               </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" data-toggle="dropdown">Authors</a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="add_author.php">Add New Author</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="manage_author.php">Manage Author</a>
+               <li class="nav-item dropdown">
+                 <a class="nav-link dropdown-toggle" data-toggle="dropdown">Authors</a>
+                 <div class="dropdown-menu">
+                     <a class="dropdown-item" href="../Manage_Book_Categories/add_author.php">Add New Author</a>
+                     <div class="dropdown-divider"></div>
+                     <a class="dropdown-item" href="../Manage_Book_Categories/manage_authors.php">Manage Author</a>
                 </div>
               </li>
               <li class="nav-item">
@@ -93,6 +102,9 @@
         </div>
     </nav><br>
     <center><h4>Manage Books</h4><br></center>
+        <?php if ($flash): ?>
+            <?php echo aurora_toast_inline($flash['type'], $flash['msg']); ?>
+        <?php endif; ?>
         <div class="row">
             <div class="col-md-2"></div>
             <div class="col-md-8">
@@ -113,15 +125,24 @@
                         $query = "select * from books";
                         $query_run = mysqli_query($connection,$query);
                         while ($row = mysqli_fetch_assoc($query_run)){
+                            $bid = (int)$row['book_id'];
+                            $bno = htmlspecialchars($row['book_no']);
                             ?>
                             <tr>
-                                <td><?php echo $row['book_name'];?></td>
-                                <td><?php echo $row['author_id'];?></td>
-                                <td><?php echo $row['cat_id'];?></td>
-                                <td><?php echo $row['book_no'];?></td>
-                                <td><?php echo $row['book_price'];?></td>
-                                <td><button class="btn" name=""><a href="edit_book.php?bn=<?php echo $row['book_no'];?>">Edit</a></button>
-                                <button class="btn"><a href="delete_book.php?bn=<?php echo $row['book_no'];?>">Delete</a></button></td>
+                                <td><?php echo htmlspecialchars($row['book_name']);?></td>
+                                <td><?php echo (int)$row['author_id'];?></td>
+                                <td><?php echo (int)$row['cat_id'];?></td>
+                                <td><?php echo $bno;?></td>
+                                <td><?php echo htmlspecialchars((string)$row['book_price']);?></td>
+                                <td>
+                                    <a class="btn" href="edit_book.php?bn=<?php echo $bid;?>">Edit</a>
+                                    <form method="POST" action="delete_book.php" style="display:inline;"
+                                          onsubmit="return confirm('Delete this book?');">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf, ENT_QUOTES); ?>">
+                                        <input type="hidden" name="book_id"    value="<?php echo $bid; ?>">
+                                        <button type="submit" class="btn">Delete</button>
+                                    </form>
+                                </td>
                             </tr>
                             <?php
                         }
