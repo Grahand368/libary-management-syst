@@ -130,13 +130,16 @@
                 <p class="auth__subtitle">Sign in to your account to continue.</p>
             </div>
 
-<?php if($error): ?>
-                <?php echo aurora_toast_inline('error', $error); ?>
+<?php if ($error): ?>
+                <?= aurora_toast_inline('error', $error) ?>
             <?php endif; ?>
 
-            <?php if($blockedFor > 0): ?>
-                <div class="text-sm" style="text-align:center;margin-bottom:16px;font-weight:600;padding:10px;background:rgba(155,28,28,0.12);color:var(--crimson);border-radius:10px;" id="aurora-block-msg">
-                    Login locked. Try again in <span id="aurora-block-countdown" data-seconds="<?php echo (int)$blockedFor; ?>"><?php echo aurora_rl_format_retry($blockedFor); ?></span>.
+            <?php if ($blockedFor > 0): ?>
+                <div class="text-sm text-center mb-3 fw-semibold p-2 rounded"
+                     style="background: rgba(155,28,28,0.12); color: var(--crimson); border-radius: 10px;"
+                     id="aurora-block-msg">
+                    Login locked. Try again in <span id="aurora-block-countdown" data-seconds="<?= (int)$blockedFor ?>">
+                        <?= aurora_rl_format_retry($blockedFor) ?></span>.
                 </div>
             <?php endif; ?>
 
