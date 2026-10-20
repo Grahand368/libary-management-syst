@@ -149,29 +149,29 @@
             </div>
         </header>
 
-        <div style="max-width:1200px;margin:0 auto;">
+        <div class="container-fluid">
 
             <!-- ── Stats ───────────────────────────────────────────────── -->
             <div class="section-title">My Library at a glance</div>
             <div class="dash-grid">
                 <div class="stat-card stat-blue">
                     <small>Currently Issued</small>
-                    <h2><?php echo (int)$stats['active_issued']; ?></h2>
+                    <h2><?= (int)$stats['active_issued'] ?></h2>
                     <small><a href="view_issued_book.php">View borrowed books →</a></small>
                 </div>
                 <div class="stat-card stat-teal">
                     <small>Available Books</small>
-                    <h2><?php echo (int)$stats['available_books']; ?></h2>
+                    <h2><?= (int)$stats['available_books'] ?></h2>
                     <small><a href="books.php">Browse the catalogue →</a></small>
                 </div>
                 <div class="stat-card stat-amber">
                     <small>Pending Requests</small>
-                    <h2><?php echo (int)$stats['pending_requests']; ?></h2>
+                    <h2><?= (int)$stats['pending_requests'] ?></h2>
                     <small><a href="my_requests.php">Manage my requests →</a></small>
                 </div>
                 <div class="stat-card stat-red">
                     <small>Active Fines</small>
-                    <h2>Rs. <?php echo number_format((float)$stats['outstanding_fine'], 2); ?></h2>
+                    <h2>Rs. <?= number_format((float)$stats['outstanding_fine'], 2) ?></h2>
                     <small><a href="my_fines.php">View fines →</a></small>
                 </div>
             </div>
@@ -190,10 +190,10 @@
             </div>
 
             <!-- ── Two-column: recent issues + recent requests / fines ── -->
-            <div class="row" style="display:flex;gap:14px;flex-wrap:wrap;">
-                <div class="card-bordered" style="flex:1 1 480px;min-width:0;">
-                    <h5 style="margin-top:0;">Recently Issued Books</h5>
-                    <div class="table-responsive" style="box-shadow:none;">
+            <div class="d-flex gap-3 flex-wrap">
+                <div class="card-bordered" style="flex: 1 1 480px; min-width: 0;">
+                    <h5 style="margin-top: 0;">Recently Issued Books</h5>
+                    <div class="table-responsive" style="box-shadow: none;">
                         <table>
                                 <thead>
                                     <tr>
@@ -231,35 +231,36 @@
                     </div>
                 </div>
 
-                <div class="card-bordered" style="flex:1 1 380px;min-width:0;">
-                    <h5 style="margin-top:0;">Recent Book Requests</h5>
+                <div class="card-bordered" style="flex: 1 1 380px; min-width: 0;">
+                    <h5 style="margin-top: 0;">Recent Book Requests</h5>
                     <?php if (empty($recentRequests)): ?>
-                        <p class="empty-row" style="margin:0;">No requests yet. <a href="books.php">Browse the catalogue</a> to request a book.</p>
+                        <p class="empty-row" style="margin: 0;">No requests yet. <a href="books.php">Browse the catalogue</a> to request a book.</p>
                     <?php else: ?>
                         <?php foreach ($recentRequests as $r): ?>
                             <div class="feed-row">
                                 <div class="feed-icon request">✉</div>
-                                <div style="flex:1;min-width:0;">
-                                    <div class="feed-title"><?php echo htmlspecialchars($r['book_name']); ?></div>
+                                <div style="flex: 1; min-width: 0;">
+                                    <div class="feed-title"><?= htmlspecialchars($r['book_name']) ?></div>
                                     <div class="feed-meta">
-                                        <?php echo htmlspecialchars($r['status']); ?>
-                                        &middot; <?php echo htmlspecialchars($r['request_date']); ?>
+                                        <?= htmlspecialchars($r['status']) ?>
+                                        · <?= htmlspecialchars($r['request_date']) ?>
                                     </div>
                                 </div>
                             </div>
                         <?php endforeach; endif; ?>
-                    <a href="my_requests.php" class="btn btn-sm btn-default" style="margin-top:8px;">See all requests</a>
+                        <a href="my_requests.php" class="btn btn-sm btn-secondary mt-2">See all requests</a>
+                    </div>
                 </div>
             </div>
 
             <!-- ── Recent Fine updates + suggestions ─────────────────── -->
-            <div class="row" style="display:flex;gap:14px;flex-wrap:wrap;">
-                <div class="card-bordered" style="flex:1 1 480px;min-width:0;">
-                    <h5 style="margin-top:0;">Recent Fine Updates</h5>
+            <div class="d-flex gap-3 flex-wrap mt-3">
+                <div class="card-bordered" style="flex: 1 1 480px; min-width: 0;">
+                    <h5 style="margin-top: 0;">Recent Fine Updates</h5>
                     <?php if (empty($recentFines)): ?>
-                        <p class="empty-row" style="margin:0;">No fines on record. Keep it up!</p>
+                        <p class="empty-row" style="margin: 0;">No fines on record. Keep it up!</p>
                     <?php else: ?>
-                        <div class="table-responsive" style="box-shadow:none;">
+                        <div class="table-responsive" style="box-shadow: none;">
                             <table>
                                 <thead>
                                     <tr>
@@ -270,35 +271,36 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <?php foreach ($recentFines as $r): ?>
-                                    <tr>
-                                        <td class="wrap"><?php echo htmlspecialchars($r['book_name']); ?></td>
-                                        <td>Rs. <?php echo number_format((float)$r['fine_amount'], 2); ?></td>
-                                        <td><?php echo htmlspecialchars($r['fine_status']); ?></td>
-                                        <td><?php echo htmlspecialchars($r['return_date'] ?: ($r['due_date'] ?: '—')); ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
+                                    <?php foreach ($recentFines as $r): ?>
+                                        <tr>
+                                            <td class="wrap"><?= htmlspecialchars($r['book_name']) ?></td>
+                                            <td>Rs. <?= number_format((float)$r['fine_amount'], 2) ?></td>
+                                            <td><?= htmlspecialchars($r['fine_status']) ?></td>
+                                            <td><?= htmlspecialchars($r['return_date'] ?: ($r['due_date'] ?: '—')) ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
                     <?php endif; ?>
                 </div>
 
-                <div class="card-bordered" style="flex:1 1 380px;min-width:0;">
-                    <h5 style="margin-top:0;">My Recent Suggestions</h5>
+                <div class="card-bordered" style="flex: 1 1 380px; min-width: 0;">
+                    <h5 style="margin-top: 0;">My Recent Suggestions</h5>
                     <?php if (empty($recentSuggests)): ?>
-                        <p class="empty-row" style="margin:0;">No suggestions yet. <a href="suggest_book.php">Suggest a book</a> for the library to consider.</p>
+                        <p class="empty-row" style="margin: 0;">No suggestions yet. <a href="suggest_book.php">Suggest a book</a> for the library to consider.</p>
                     <?php else: ?>
                         <?php foreach ($recentSuggests as $r): ?>
                             <div class="feed-row">
                                 <div class="feed-icon suggest">💡</div>
-                                <div style="flex:1;min-width:0;">
-                                    <div class="feed-title"><?php echo htmlspecialchars($r['book_title']); ?></div>
-                                    <div class="feed-meta"><?php echo htmlspecialchars($r['status']); ?> &middot; <?php echo htmlspecialchars($r['created_at']); ?></div>
+                                <div style="flex: 1; min-width: 0;">
+                                    <div class="feed-title"><?= htmlspecialchars($r['book_title']) ?></div>
+                                    <div class="feed-meta"><?= htmlspecialchars($r['status']) ?> · <?= htmlspecialchars($r['created_at']) ?></div>
                                 </div>
                             </div>
                         <?php endforeach; endif; ?>
-                    <a href="my_purchase_suggestions.php" class="btn btn-sm btn-default" style="margin-top:8px;">See all suggestions</a>
+                        <a href="my_purchase_suggestions.php" class="btn btn-sm btn-secondary mt-2">See all suggestions</a>
+                    </div>
                 </div>
             </div>
 
@@ -309,7 +311,7 @@
                     <p class="empty-row" style="margin:0;">No activity yet. Start by browsing the catalogue.</p>
                 <?php else: foreach ($feed as $a): ?>
                     <div class="feed-row">
-                        <div class="feed-icon <?php echo htmlspecialchars($a['icon']); ?>">
+                        <div class="feed-icon <?= htmlspecialchars($a['icon']) ?>">
                             <?php
                             echo match ($a['icon']) {
                                 'issued'  => '📚',
@@ -320,12 +322,12 @@
                             };
                             ?>
                         </div>
-                        <div style="flex:1;min-width:0;">
-                            <div class="feed-title"><?php echo htmlspecialchars($a['title']); ?></div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div class="feed-title"><?= htmlspecialchars($a['title']) ?></div>
                             <div class="feed-meta">
-                                <?php echo htmlspecialchars($a['meta']); ?>
+                                <?= htmlspecialchars($a['meta']) ?>
                                 <?php if (!empty($a['when'])): ?>
-                                    &middot; <?php echo htmlspecialchars($a['when']); ?>
+                                    · <?= htmlspecialchars($a['when']) ?>
                                 <?php endif; ?>
                             </div>
                         </div>
