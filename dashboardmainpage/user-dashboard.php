@@ -138,12 +138,14 @@
 
     <main class="app-main" id="app-main">
         <header class="app-header">
-            <div style="display:flex;align-items:center;gap:10px;">
+            <div class="header-left">
                 <button class="menu-toggle" data-menu-toggle aria-label="Open menu">☰</button>
-                <div class="header-title">Welcome, <?php echo htmlspecialchars($user['name']); ?></div>
+                <div class="header-title">Welcome, <?= htmlspecialchars($user['name']) ?></div>
             </div>
-            <div class="text-muted" style="font-size:13px;">
-                <?php echo htmlspecialchars($user['email']); ?>
+            <div class="header-right">
+                <span class="text-muted" style="font-size: 13px;">
+                    <?= htmlspecialchars($user['email']) ?>
+                </span>
             </div>
         </header>
 
