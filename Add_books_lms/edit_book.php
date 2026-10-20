@@ -134,39 +134,44 @@
 
     <main class="app-main" id="app-main">
         <header class="app-header">
-            <div style="display:flex;align-items:center;gap:10px;">
+            <div class="header-left">
                 <button class="menu-toggle" data-menu-toggle aria-label="Open menu">☰</button>
                 <div class="header-title">Edit Book</div>
             </div>
+            <div class="header-right">
+                <span class="text-muted" style="font-size: 13px;">
+                    Welcome, <strong><?= htmlspecialchars($_SESSION['name'] ?? '') ?></strong>
+                </span>
+            </div>
         </header>
 
-        <div style="max-width:640px;margin:0 auto;">
+        <div class="card-bordered" style="max-width: 640px; margin: 0 auto;">
             <?php foreach ($errors as $e): ?>
-                <?php echo aurora_toast_inline('error', $e); ?>
+                <?= aurora_toast_inline('error', $e) ?>
             <?php endforeach; ?>
 
-            <form method="POST" action="edit_book.php?bn=<?php echo (int)$bookId; ?>" class="card-bordered" style="padding:18px;">
-                <?php echo aurora_csrf_field(); ?>
+            <form method="POST" action="edit_book.php?bn=<?= (int)$bookId ?>" class="card-bordered">
+                <?= aurora_csrf_field() ?>
 
                 <div class="form-group">
                     <label for="book_no">Book Number (read-only)</label>
                     <input type="text" id="book_no" class="form-control"
-                           value="<?php echo htmlspecialchars($book['book_no']); ?>" disabled>
+                           value="<?= htmlspecialchars($book['book_no']) ?>" disabled>
                 </div>
 
                 <div class="form-group">
                     <label for="book_name">Book Name</label>
                     <input type="text" name="book_name" id="book_name" class="form-control" required maxlength="255"
-                           value="<?php echo htmlspecialchars($book['book_name']); ?>">
+                           value="<?= htmlspecialchars($book['book_name']) ?>">
                 </div>
 
                 <div class="form-group">
                     <label for="author_id">Author</label>
                     <select name="author_id" id="author_id" class="form-control" required>
                         <?php foreach ($authors as $a): ?>
-                            <option value="<?php echo (int)$a['author_id']; ?>"
-                                <?php echo ((int)$a['author_id'] === (int)$book['author_id']) ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($a['author_name']); ?>
+                            <option value="<?= (int)$a['author_id'] ?>"
+                                <?= ((int)$a['author_id'] === (int)$book['author_id']) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($a['author_name']) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -176,9 +181,9 @@
                     <label for="cat_id">Category</label>
                     <select name="cat_id" id="cat_id" class="form-control" required>
                         <?php foreach ($categories as $c): ?>
-                            <option value="<?php echo (int)$c['cat_id']; ?>"
-                                <?php echo ((int)$c['cat_id'] === (int)$book['cat_id']) ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($c['cat_name']); ?>
+                            <option value="<?= (int)$c['cat_id'] ?>"
+                                <?= ((int)$c['cat_id'] === (int)$book['cat_id']) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($c['cat_name']) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -187,17 +192,19 @@
                 <div class="form-group">
                     <label for="book_price">Price (Rs.)</label>
                     <input type="number" step="0.01" min="0" name="book_price" id="book_price" class="form-control"
-                           value="<?php echo htmlspecialchars((string)$book['book_price']); ?>">
+                           value="<?= htmlspecialchars((string)$book['book_price']) ?>">
                 </div>
 
                 <div class="form-group">
                     <label for="book_qty">Quantity</label>
                     <input type="number" min="0" max="100000" name="book_qty" id="book_qty" class="form-control" required
-                           value="<?php echo (int)$book['book_qty']; ?>">
+                           value="<?= (int)$book['book_qty'] ?>">
                 </div>
 
-                <button type="submit" class="btn btn-primary">Update Book</button>
-                <a href="manage_book.php" class="btn btn-default">Cancel</a>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Update Book</button>
+                    <a href="manage_book.php" class="btn btn-secondary">Cancel</a>
+                </div>
             </form>
         </div>
     </main>
