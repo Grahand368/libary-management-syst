@@ -447,17 +447,11 @@ body.app-bg::before {
   overflow-y: auto;
   overflow-x: hidden;
   z-index: 10;
-  /* Solid dark background ensures no colorless areas even if gradient falls short */
-  background: #111827;
-}
-.sidebar::before {
-  content: "";
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, #0a0e1a 0%, #111827 20%, #111827 100%);
+  /* Gradient on sidebar itself with local attachment - scrolls with content */
+  background: linear-gradient(180deg, #0a0e1a 0%, #111827 15%, #111827 100%);
+  background-attachment: local;  /* Key: background scrolls with content */
   background-repeat: no-repeat;
-  background-size: 100% 500vh;  /* Massive height covers all scrollable content */
-  z-index: -1;
-  pointer-events: none;
+  background-size: 100% 2000vh;  /* Massive height covers all scrollable content */
 }
 .sidebar::-webkit-scrollbar { width: 6px; }
 .sidebar::-webkit-scrollbar-track { background: transparent; }
