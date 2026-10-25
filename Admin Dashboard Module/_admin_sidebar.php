@@ -99,7 +99,7 @@
                 <?php endforeach; ?>
 
                 <div class="section-label">Session</div>
-                <a href="../logout.php">⎋ Logout</a>
+                <a href="/lms/logout.php">⎋ Logout</a>
             </aside>
             <div class="sidebar-overlay" data-sidebar-overlay aria-hidden="true"></div>
             <?php
