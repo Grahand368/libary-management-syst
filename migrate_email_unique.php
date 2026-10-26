@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     require_once __DIR__ . '/aurora_db.php';
     require_once __DIR__ . '/aurora_validation.php';
     $conn = aurora_db();

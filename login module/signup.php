@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     require_once __DIR__ . '/../aurora_validation.php';
     $old    = $_SESSION['flash_old']    ?? [];
     $errors = $_SESSION['flash_errors'] ?? [];

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     /**
      * Aurora Library — Admin sidebar (shared).
      *
