@@ -22,6 +22,7 @@
 
 require_once __DIR__ . '/../aurora_auth.php';
 require_once __DIR__ . '/../aurora_db.php';
+require_once __DIR__ . '/../aurora_error.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: manage_fines.php');
