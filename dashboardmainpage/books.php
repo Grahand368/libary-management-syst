@@ -19,6 +19,7 @@
 
     require_once __DIR__ . '/../aurora_auth.php';
     require_once __DIR__ . '/../aurora_db.php';
+    require_once __DIR__ . '/../aurora_validation.php';
     require_once __DIR__ . '/../user_auth_check.php';
 
     if (!defined('AURORA_LOW_STOCK_THRESHOLD')) define('AURORA_LOW_STOCK_THRESHOLD', 3);

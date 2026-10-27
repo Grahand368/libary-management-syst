@@ -12,6 +12,7 @@
     require_once __DIR__ . '/../aurora_auth.php';
     require_once __DIR__ . '/../aurora_db.php';
     require_once __DIR__ . '/../aurora_error.php';
+    require_once __DIR__ . '/../aurora_validation.php';
     require_once __DIR__ . '/../admin_auth_check.php';
 
     if (!defined('AURORA_BORROW_LIMIT')) define('AURORA_BORROW_LIMIT', 3);
