@@ -247,9 +247,16 @@
             var input = $(sel);
             if (!isToggleableInput(input)) return;
             try {
-                input.type = (input.type === 'password') ? 'text' : 'password';
-                btn.setAttribute('aria-label', input.type === 'password' ? 'Show password' : 'Hide password');
-                btn.textContent = input.type === 'password' ? '👁' : '🙈';
+                var isVisible = input.type === 'text';
+                input.type = isVisible ? 'password' : 'text';
+                btn.setAttribute('aria-label', isVisible ? 'Show password' : 'Hide password');
+                btn.setAttribute('data-password-visible', !isVisible);
+                /* If the button has no child elements (no SVG), swap the text;
+                   otherwise the SVG stays and we just track state via the
+                   data-password-visible attribute for potential CSS styling. */
+                if (btn.children.length === 0) {
+                    btn.textContent = isVisible ? '👁' : '🙈';
+                }
             } catch (e) {}
             if (typeof input.focus === 'function') { try { input.focus(); } catch (e) {} }
         };
@@ -257,8 +264,18 @@
 
     function initPasswordToggles() {
         $$('[data-toggle-password]').forEach(function (btn) {
-            if (!btn.textContent.trim()) btn.textContent = '👁';
+            /* Only set default text when the button has no existing child
+               elements (e.g. SVG icons). Buttons with SVG content should
+               keep their icon; we toggle a data attribute for CSS hooks
+               and update aria-label only. */
+            var hasContent = btn.children.length > 0 || btn.textContent.trim();
+            if (!hasContent) {
+                btn.textContent = '👁';
+                btn.style.fontSize = '18px';
+                btn.style.lineHeight = '1';
+            }
             btn.setAttribute('aria-label', 'Show password');
+            btn.setAttribute('data-password-visible', 'false');
             btn.addEventListener('click', onTogglePasswordClick(btn));
         });
     }
