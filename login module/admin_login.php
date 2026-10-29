@@ -6,8 +6,6 @@
     aurora_session_start();
     aurora_no_cache_headers();
 
-    // Logged-in admins go straight to the console; this also stops the
-    // login form from being re-rendered when the user hits Back/Forward.
     if (aurora_session_valid() && aurora_is_admin()) {
         header('Location: ../Admin Dashboard Module/admin_dashboard.php');
         exit;
@@ -72,12 +70,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aurora Library — Administrator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../static/css/aurora.css">
 </head>
-    <body class="app-bg" onpageshow="if(event.persisted){location.reload();}">
+<body class="app-bg" onpageshow="if(event.persisted){location.reload();}">
 
 <div class="auth">
-    <!-- Left: Art panel -->
     <aside class="auth__art">
         <div class="auth__art-inner fade-in">
             <span class="eyebrow auth__art-eyebrow">Aurora Library · Administration</span>
@@ -97,102 +97,115 @@
         </div>
     </aside>
 
-    <!-- Right: Form panel -->
     <section class="auth__panel">
         <div class="auth__card fade-up">
-            <a href="index.php" class="brand mb-6">
-                <span class="brand__mark">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                </span>
-                <span class="brand__text">
+            <div class="auth__brand">
+                <div class="auth__brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                </div>
+                <div class="auth__brand-text">
                     <strong>Aurora Library</strong>
-                    <span>Admin Console</span>
-                </span>
-            </a>
+                    <span>ADMINISTRATION PORTAL</span>
+                </div>
+            </div>
 
-            <div class="auth__tabs">
-                <a href="index.php" class="auth__tab">Member</a>
-                <a href="admin_login.php" class="auth__tab is-active">Administrator</a>
+            <div class="auth__role-selector" role="radiogroup" aria-label="Select portal">
+                <a href="index.php" class="auth__role-btn" role="radio" aria-checked="false" tabindex="-1">
+                    <span>Member</span>
+                </a>
+                <a href="admin_login.php" class="auth__role-btn is-active" role="radio" aria-checked="true">
+                    <span>Administrator</span>
+                </a>
             </div>
 
             <div class="auth__header">
-                <h2 class="auth__title">Admin sign in.</h2>
-                <p class="auth__subtitle">Authorized personnel only. All access is logged.</p>
+                <h2 class="auth__title">Welcome back, Administrator</h2>
+                <p class="auth__subtitle">Sign in to manage your library with confidence.</p>
             </div>
 
-<?php if($error): ?>
-                <?php echo aurora_toast_inline('error', $error); ?>
+            <?php if($error): ?>
+                <?= aurora_toast_inline('error', $error) ?>
             <?php endif; ?>
 
             <?php if($blockedFor > 0): ?>
-                <div class="text-sm" style="text-align:center;margin-bottom:16px;font-weight:600;padding:10px;background:rgba(155,28,28,0.12);color:var(--crimson);border-radius:10px;" id="aurora-block-msg">
-                    Login locked. Try again in <span id="aurora-block-countdown" data-seconds="<?php echo (int)$blockedFor; ?>"><?php echo aurora_rl_format_retry($blockedFor); ?></span>.
+                <div class="auth__rate-limit" id="aurora-block-msg" role="alert">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    <span>Login locked. Try again in <span id="aurora-block-countdown" data-seconds="<?php echo (int)$blockedFor; ?>"><?php echo aurora_rl_format_retry($blockedFor); ?></span>.</span>
                 </div>
             <?php endif; ?>
 
-        <form action="" method="post" autocomplete="off" id="login-form">
-                <!-- Chrome autofill trap: hidden fields absorb the saved credentials -->
+            <form action="" method="post" autocomplete="off" id="login-form" novalidate>
                 <input type="text" name="email_x" tabindex="-1" autocomplete="no value" style="opacity:0;position:absolute;left:-9999px;width:0;height:0;">
                 <input type="password" name="password_x" tabindex="-1" autocomplete="new-password" style="opacity:0;position:absolute;left:-9999px;width:0;height:0;">
 
                 <div class="field">
                     <label class="field__label" for="email">Admin Email</label>
                     <div class="input--with-icon">
-                        <svg class="input__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
-                        <input class="input" type="email" name="email" id="email" placeholder="admin@aurora.library" required autocomplete="off">
+                        <svg class="input__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+                        <input class="input" type="email" name="email" id="email" placeholder="admin@aurora.library" required autocomplete="email" aria-describedby="email-hint">
                     </div>
+                    <span class="field__hint" id="email-hint">Your administrator email address</span>
                 </div>
 
                 <div class="field">
                     <label class="field__label" for="password">Password</label>
-                    <div class="input--with-icon" style="position:relative;">
-                        <svg class="input__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                        <input class="input" type="password" name="password" id="password" placeholder="Enter your password" required autocomplete="new-password">
-                        <button type="button" data-toggle-password="#password" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--ink-400);padding:4px;">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <div class="input--with-icon">
+                        <svg class="input__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <input class="input" type="password" name="password" id="password" placeholder="Enter your password" required autocomplete="current-password" aria-describedby="password-hint">
+                        <button type="button" class="input__toggle" data-toggle-password="#password" aria-label="Show password" aria-controls="password" aria-pressed="false">
+                            <svg class="input__toggle-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
                         </button>
                     </div>
+                    <span class="field__hint" id="password-hint">Your secure password</span>
                 </div>
 
-                <div class="flex-between mb-6" style="font-size:13px;">
-                    <label class="flex gap-2" style="color:var(--ink-600);align-items:center;cursor:pointer;">
-                        <input type="checkbox" style="accent-color:var(--gold-600);"> Keep me signed in
+                <div class="field field--remember">
+                    <label class="checkbox-wrapper" for="remember">
+                        <input type="checkbox" id="remember" name="remember" value="1" aria-describedby="remember-hint">
+                        <span class="checkbox-box">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                        </span>
+                        <span class="checkbox-label">Keep me signed in</span>
                     </label>
-                    <a href="#" style="color:var(--gold-700);font-weight:600;">Need help?</a>
+                    <a href="#" class="auth__help-link">Forgot password?</a>
                 </div>
 
-                <button type="submit" name="login" class="btn btn--primary btn--block btn--lg">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    <span>Access Console</span>
+                <button type="submit" name="login" class="btn btn--primary btn--block btn--lg auth__submit-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <span>Sign In to Admin Console</span>
                 </button>
             </form>
 
             <div class="auth__footer">
-                <a href="index.php">← Back to member sign in</a>
+                <a href="index.php" class="auth__footer-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                    <span>Back to Member Sign In</span>
+                </a>
             </div>
         </div>
     </section>
 </div>
 
- <script src="../static/js/aurora.js"></script>
- <script>
- (function(){
-     // Wipe any browser autofill that may have survived autocomplete="off"
-     // on back/forward navigation (bfcache restore or HTTP cache).
-     function clearLoginForm(){
-         var f = document.getElementById('login-form');
-         if(!f) return;
-         var inputs = f.querySelectorAll('input[type="email"], input[type="password"], input[type="text"]');
-         for(var i=0;i<inputs.length;i++){
-             inputs[i].value = '';
-             inputs[i].autocomplete = 'off';
-         }
-     }
-     window.addEventListener('pageshow', function(e){
-         clearLoginForm();
-     });
-     document.addEventListener('DOMContentLoaded', clearLoginForm);
-     clearLoginForm();
+<script src="../static/js/aurora.js"></script>
+<script>
+(function(){
+    function clearLoginForm(){
+        var f = document.getElementById('login-form');
+        if(!f) return;
+        var inputs = f.querySelectorAll('input[type="email"], input[type="password"], input[type="text"]');
+        for(var i=0;i<inputs.length;i++){
+            inputs[i].value = '';
+            inputs[i].autocomplete = 'off';
+        }
+    }
+    window.addEventListener('pageshow', function(e){
+        clearLoginForm();
+    });
+    document.addEventListener('DOMContentLoaded', clearLoginForm);
+    clearLoginForm();
 })();
 </script>
 <script>
@@ -222,4 +235,3 @@
 </script>
 </body>
 </html>
-
