@@ -48,58 +48,77 @@
             ];
             ?>
             <aside class="app-sidebar" data-sidebar aria-label="Admin navigation">
-                <div class="brand">⚜ Aurora Admin</div>
+                <div class="sidebar-header">
+                    <div class="brand">
+                        <span class="brand-icon">⚜</span>
+                        <span class="brand-text">Aurora Admin</span>
+                    </div>
+                    <button class="sidebar-toggle" data-sidebar-collapse aria-label="Collapse sidebar" aria-expanded="false">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                </div>
 
-                <div class="section-label">Main</div>
-                <?php foreach ($main as $l):
-                    $active = ($current === basename($l['href'])) ? 'active' : ''; ?>
-                    <a class="<?php echo $active; ?>" href="<?php echo $l['href']; ?>">
-                        <span style="margin-right:6px;opacity:.85;"><?php echo $l['icon']; ?></span><?php echo $l['label']; ?>
+                <nav class="sidebar-nav">
+                    <div class="section-label">Main</div>
+                    <?php foreach ($main as $l):
+                        $active = ($current === basename($l['href'])) ? 'active' : ''; ?>
+                        <a class="<?php echo $active; ?>" href="<?php echo $l['href']; ?>">
+                            <span class="nav-icon"><?php echo $l['icon']; ?></span>
+                            <span class="nav-text"><?php echo $l['label']; ?></span>
+                        </a>
+                    <?php endforeach; ?>
+
+                    <div class="section-label">Library Management</div>
+                    <?php foreach ($library as $l):
+                        $active = ($current === basename($l['href'])) ? 'active' : ''; ?>
+                        <a class="<?php echo $active; ?>" href="<?php echo $l['href']; ?>">
+                            <span class="nav-icon"><?php echo $l['icon']; ?></span>
+                            <span class="nav-text"><?php echo $l['label']; ?></span>
+                        </a>
+                    <?php endforeach; ?>
+
+                    <div class="section-label">Transactions</div>
+                    <?php foreach ($transactions as $l):
+                        $active = ($current === basename($l['href'])) ? 'active' : ''; ?>
+                        <a class="<?php echo $active; ?>" href="<?php echo $l['href']; ?>">
+                            <span class="nav-icon"><?php echo $l['icon']; ?></span>
+                            <span class="nav-text"><?php echo $l['label']; ?></span>
+                        </a>
+                    <?php endforeach; ?>
+
+                    <div class="section-label">Requests</div>
+                    <?php foreach ($requests as $l):
+                        $active = ($current === basename($l['href'])) ? 'active' : ''; ?>
+                        <a class="<?php echo $active; ?>" href="<?php echo $l['href']; ?>">
+                            <span class="nav-icon"><?php echo $l['icon']; ?></span>
+                            <span class="nav-text"><?php echo $l['label']; ?></span>
+                        </a>
+                    <?php endforeach; ?>
+
+                    <div class="section-label">Users</div>
+                    <?php foreach ($users as $l):
+                        $active = ($current === basename($l['href'])) ? 'active' : ''; ?>
+                        <a class="<?php echo $active; ?>" href="<?php echo $l['href']; ?>">
+                            <span class="nav-icon"><?php echo $l['icon']; ?></span>
+                            <span class="nav-text"><?php echo $l['label']; ?></span>
+                        </a>
+                    <?php endforeach; ?>
+
+                    <div class="section-label">Account</div>
+                    <?php foreach ($account as $l):
+                        $active = ($current === basename($l['href'])) ? 'active' : ''; ?>
+                        <a class="<?php echo $active; ?>" href="<?php echo $l['href']; ?>">
+                            <span class="nav-icon"><?php echo $l['icon']; ?></span>
+                            <span class="nav-text"><?php echo $l['label']; ?></span>
+                        </a>
+                    <?php endforeach; ?>
+
+                    <div class="section-label">Session</div>
+                    <a href="/lms/logout.php">
+                        <span class="nav-icon">⎋</span>
+                        <span class="nav-text">Logout</span>
                     </a>
-                <?php endforeach; ?>
-
-                <div class="section-label">Library Management</div>
-                <?php foreach ($library as $l):
-                    $active = ($current === basename($l['href'])) ? 'active' : ''; ?>
-                    <a class="<?php echo $active; ?>" href="<?php echo $l['href']; ?>">
-                        <span style="margin-right:6px;opacity:.85;"><?php echo $l['icon']; ?></span><?php echo $l['label']; ?>
-                    </a>
-                <?php endforeach; ?>
-
-                <div class="section-label">Transactions</div>
-                <?php foreach ($transactions as $l):
-                    $active = ($current === basename($l['href'])) ? 'active' : ''; ?>
-                    <a class="<?php echo $active; ?>" href="<?php echo $l['href']; ?>">
-                        <span style="margin-right:6px;opacity:.85;"><?php echo $l['icon']; ?></span><?php echo $l['label']; ?>
-                    </a>
-                <?php endforeach; ?>
-
-                <div class="section-label">Requests</div>
-                <?php foreach ($requests as $l):
-                    $active = ($current === basename($l['href'])) ? 'active' : ''; ?>
-                    <a class="<?php echo $active; ?>" href="<?php echo $l['href']; ?>">
-                        <span style="margin-right:6px;opacity:.85;"><?php echo $l['icon']; ?></span><?php echo $l['label']; ?>
-                    </a>
-                <?php endforeach; ?>
-
-                <div class="section-label">Users</div>
-                <?php foreach ($users as $l):
-                    $active = ($current === basename($l['href'])) ? 'active' : ''; ?>
-                    <a class="<?php echo $active; ?>" href="<?php echo $l['href']; ?>">
-                        <span style="margin-right:6px;opacity:.85;"><?php echo $l['icon']; ?></span><?php echo $l['label']; ?>
-                    </a>
-                <?php endforeach; ?>
-
-                <div class="section-label">Account</div>
-                <?php foreach ($account as $l):
-                    $active = ($current === basename($l['href'])) ? 'active' : ''; ?>
-                    <a class="<?php echo $active; ?>" href="<?php echo $l['href']; ?>">
-                        <span style="margin-right:6px;opacity:.85;"><?php echo $l['icon']; ?></span><?php echo $l['label']; ?>
-                    </a>
-                <?php endforeach; ?>
-
-                <div class="section-label">Session</div>
-                <a href="/lms/logout.php">⎋ Logout</a>
+                </nav>
             </aside>
             <div class="sidebar-overlay" data-sidebar-overlay aria-hidden="true"></div>
             <?php
@@ -114,12 +133,14 @@
         function render_admin_header(string $title): void {
             ?>
             <header class="app-header">
-                <div style="display:flex;align-items:center;gap:10px;">
+                <div class="header-left">
                     <button class="menu-toggle" data-menu-toggle aria-label="Open menu">☰</button>
                     <div class="header-title"><?php echo htmlspecialchars($title); ?></div>
                 </div>
-                <div class="text-muted" style="font-size:13px;">
-                    Welcome, <strong><?php echo htmlspecialchars($_SESSION['name'] ?? ''); ?></strong>
+                <div class="header-right">
+                    <div class="text-muted" style="font-size:13px;">
+                        Welcome, <strong><?php echo htmlspecialchars($_SESSION['name'] ?? ''); ?></strong>
+                    </div>
                 </div>
             </header>
             <?php

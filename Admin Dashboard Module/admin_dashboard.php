@@ -16,34 +16,6 @@
 
     $stats = aurora_admin_dashboard_stats();
 
-    $sidebar_manage = [
-        ['label' => 'Dashboard',    'href' => 'admin_dashboard.php'],
-        ['label' => 'Manage Users', 'href' => 'manage_users.php'],
-    ];
-    $sidebar_catalog = [
-        ['label' => 'Add Book',        'href' => '../Add_books_lms/add_book.php'],
-        ['label' => 'Manage Books',    'href' => '../Add_books_lms/manage_book.php'],
-        ['label' => 'Categories',      'href' => '../Manage_Book_Categories/manage_cat.php'],
-        ['label' => 'Authors',         'href' => '../Manage_Book_Categories/manage_authors.php'],
-    ];
-    $sidebar_circulation = [
-        ['label' => 'Issue Book',     'href' => '../Issue_book_Module/issue_book.php'],
-        ['label' => 'Return Book',    'href' => 'return_book.php'],
-        ['label' => 'Issued Books',   'href' => 'view_issued_book.php'],
-    ];
-    $sidebar_requests = [
-        ['label' => 'Book Requests',        'href' => 'manage_requests.php'],
-        ['label' => 'Purchase Suggestions', 'href' => 'manage_purchase_requests.php'],
-    ];
-    $sidebar_fines = [
-        ['label' => 'Manage Fines', 'href' => 'manage_fines.php'],
-    ];
-    $profile_links = [
-        ['label' => 'View Profile',    'href' => 'view_profile.php'],
-        ['label' => 'Edit Profile',    'href' => 'edit_profile.php'],
-        ['label' => 'Change Password', 'href' => 'change_password.php'],
-    ];
-
     $current = basename($_SERVER['SCRIPT_NAME']);
     require __DIR__ . '/_admin_sidebar.php';
 
@@ -74,10 +46,10 @@
       <script type="text/javascript" src="../bootstrap-4.4.1/js/bootstrap.min.js"></script>
       <link rel="stylesheet" href="../static/css/aurora.css">
       <style>
-        .overdue-link { color:#c0392b; font-weight:700; }
+        .overdue-link { color:#f87171; font-weight:700; }
       </style>
 </head>
-<body>
+<body class="admin-dashboard">
 <div class="app-shell">
     <?php render_admin_sidebar($current); ?>
 
@@ -117,7 +89,7 @@
                 <div class="stat-card stat-teal">
                     <small>Available Books</small>
                     <h2><?php echo (int)$stats['books']['available']; ?></h2>
-                    <small>book_qty &gt; 0</small>
+                    <small>book_qty > 0</small>
                 </div>
                 <div class="stat-card stat-blue">
                     <small>Issued Books</small>
@@ -132,7 +104,7 @@
             </div>
 
             <!-- REQUESTS + ACTIVE FINES -->
-            <div class="section-title">Requests &amp; Fines</div>
+            <div class="section-title">Requests & Fines</div>
             <div class="dash-grid-3">
                 <div class="stat-card stat-amber">
                     <small>Pending Book Requests</small>
@@ -154,14 +126,14 @@
             <!-- QUICK ACTIONS -->
             <div class="section-title">Quick Actions</div>
             <div class="quick-actions">
-                <a class="quick-btn" href="manage_users.php">👥 Manage Users</a>
-                <a class="quick-btn" href="../Add_books_lms/add_book.php">➕ Add Book</a>
-                <a class="quick-btn" href="../Add_books_lms/manage_book.php">📚 Manage Books</a>
-                <a class="quick-btn" href="../Issue_book_Module/issue_book.php">📤 Issue Book</a>
-                <a class="quick-btn" href="return_book.php">📥 Return Book</a>
-                <a class="quick-btn" href="manage_requests.php">📨 Book Requests</a>
-                <a class="quick-btn" href="manage_purchase_requests.php">💡 Purchase Suggestions</a>
-                <a class="quick-btn" href="manage_fines.php">💸 Fine Management</a>
+                <a class="quick-btn" href="manage_users.php"><span class="icon">👥</span> Manage Users</a>
+                <a class="quick-btn" href="../Add_books_lms/add_book.php"><span class="icon">➕</span> Add Book</a>
+                <a class="quick-btn" href="../Add_books_lms/manage_book.php"><span class="icon">📚</span> Manage Books</a>
+                <a class="quick-btn" href="../Issue_book_Module/issue_book.php"><span class="icon">📤</span> Issue Book</a>
+                <a class="quick-btn" href="return_book.php"><span class="icon">📥</span> Return Book</a>
+                <a class="quick-btn" href="manage_requests.php"><span class="icon">📨</span> Book Requests</a>
+                <a class="quick-btn" href="manage_purchase_requests.php"><span class="icon">💡</span> Purchase Suggestions</a>
+                <a class="quick-btn" href="manage_fines.php"><span class="icon">💸</span> Fine Management</a>
             </div>
 
             <!-- RECENT ACTIVITY (two columns) -->
