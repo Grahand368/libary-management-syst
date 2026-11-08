@@ -108,6 +108,13 @@
 
     <section class="auth__panel">
         <div class="auth__card fade-up">
+            <div class="auth__portal-switcher" role="navigation" aria-label="Switch portal">
+                <a href="admin_login.php" class="portal-switcher-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    <span>Switch to Admin Portal</span>
+                </a>
+            </div>
+
             <div class="auth__brand">
                 <div class="auth__brand-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
