@@ -2,47 +2,69 @@
 
 A web-based Library Management System built with PHP and MySQL that lets administrators manage books, categories, authors, fines, and member accounts, while providing members with a portal to view issued books, request borrows, return books, and manage their profile.
 
-The project is now organized around the **Aurora** theme: a shared auth/session library (`aurora_*.php`), a hardened login flow with rate-limiting, prepared statements, and a custom Aurora UI.
+The project is organized around the **Aurora** theme: a shared auth/session library (`aurora_*.php`), a hardened login flow with rate-limiting, prepared statements, and a custom Aurora UI with a premium dark admin dashboard and responsive member portal.
 
 ## Features
 
-### Admin Panel
-- **Dashboard** — Overview statistics (users, books, categories, authors, issued books, fines, requests)
-- **Book Management** — Add, edit, delete, list, and view books
-- **Category Management** — Add, edit, delete, and view categories
-- **Author Management** — Add, edit, delete, and view authors
-- **Book Issuing** — Issue books to registered members
+### Admin Panel (Dark Theme Dashboard)
+- **Dashboard** — Overview statistics with color-coded stat cards (users, books, requests, fines), quick actions grid, and recent activity tables
+- **Book Management** — Add, edit, delete, list, and view books (`Add_books_lms/`)
+- **Category & Author Management** — Full CRUD for categories and authors (`Manage_Book_Categories/`)
+- **Book Issuing** — Issue books to registered members (`Issue_book_Module/`)
 - **Return Books** — Process returns, set due/return dates, calculate fines
-- **Fine Management** — View, update, and resolve fines (`view_fines.php`, `manage_fines.php`, `update_fine.php`, `update_fine_status.php`)
-- **User Management** — View, suspend, reactivate, and remove users (`manage_users.php`, `user_action.php`, `view_user.php`)
-- **Book Requests** — Review and approve/decline member borrow requests (`manage_requests.php`, `respond_request.php`)
+- **Fine Management** — View all fines with filters, mark paid/waived, edit amounts (`manage_fines.php`)
+- **User Management** — View, suspend, reactivate, and remove users (`manage_users.php`)
+- **Book Requests** — Review and approve/decline member borrow requests with stock/borrow-limit validation (`manage_requests.php`, `respond_request.php`)
 - **Purchase Requests** — Review and approve/decline library-purchase suggestions (`manage_purchase_requests.php`, `respond_purchase_request.php`)
-- **Issued Books** — View all currently issued books
+- **Issued Books** — View all currently issued books with overdue highlighting
 - **Profile Management** — View, edit profile, change password
 
-### User Panel
-- **Dashboard** — Issued book count, active fines, request status
-- **Books Catalog** — Browse available books (`books.php`)
-- **Issued Books** — View books currently issued to the member
-- **Return Book** — Self-service return flow
-- **Request Book** — Request a book that is currently unavailable (`request_book.php`, `cancel_request.php`, `my_requests.php`)
-- **Suggest Purchase** — Suggest a new title for the library (`suggest_book.php`, `my_purchase_suggestions.php`)
-- **My Fines** — View outstanding and paid fines (`my_fines.php`)
+### User Panel (Light Theme Portal)
+- **Dashboard** — Personal stats (issued books, available books, pending requests, active fines), quick actions, recent activity feed
+- **Books Catalog** — Searchable, filterable catalog with stock status badges and request buttons (`books.php`)
+- **Issued Books** — View borrowed books with due dates, overdue days, and calculated fines
+- **Return Book** — Self-service return flow (`return_book.php`)
+- **Request Book** — Request unavailable books with duplicate/active-loan prevention (`request_book.php`, `my_requests.php`)
+- **Suggest Purchase** — Suggest new titles for library acquisition (`suggest_book.php`, `my_purchase_suggestions.php`)
+- **My Fines** — View outstanding and paid fines with NPR formatting
 - **Profile Management** — View, edit profile, change password
+
+### Authentication & Security
+- **Premium Login Pages** — Both admin and member login feature a two-column design with promotional art panel and glassmorphism card
+- **Portal Switcher** — One-click toggle between Member and Admin portals on both login pages
+- **Role Selector** — Pill-shaped segmented control for quick role switching
+- **Rate-Limited Login** — Brute-force protection with live countdown UI (`login_attempts` table)
 
 ## Technology Stack
 
-- **Backend:** PHP 7.4+
+- **Backend:** PHP 7.4+ (PHP 8.x recommended)
 - **Database:** MySQL 5.7+ / MariaDB 10.3+ (MySQLi with prepared statements)
 - **Frontend:** Custom Aurora CSS (`static/css/aurora.css`) and JS (`static/js/aurora.js`)
 - **Session/Security:** Custom Aurora helpers — `aurora_auth.php`, `aurora_db.php`, `aurora_error.php`, `aurora_validation.php`, `includes/auth.php`, `includes/csrf.php`, `includes/session.php`
 
+## UI/UX Highlights
+
+| Area | Admin (Dark) | Member (Light) |
+|------|--------------|----------------|
+| **Background** | `#0F172A` (midnight navy) | `#FAF8F2` (soft ivory) |
+| **Cards** | `#1E293B` with `#334155` borders | White with subtle shadows |
+| **Primary Accent** | `#38BDF8` (sky blue) | `#0F766E` (teal) |
+| **Secondary Accent** | `#14B8A6` (teal) | `#E8C66A` (champagne gold) |
+| **Text Primary** | `#F8FAFC` | `#1E293B` |
+| **Tables** | Sticky dark headers, hover/alt row tints, pill badges | Sticky light headers, hover/alt row tints, Bootstrap badges |
+| **Forms** | Glassmorphism cards, teal focus rings | White cards, teal focus rings |
+
+### Responsive Design
+- **Desktop (≥992px):** Full two-column login, sidebar + main layout, multi-column grids
+- **Tablet (768–991px):** Collapsible sidebar drawer, hamburger menu, stacked grids
+- **Mobile (<768px):** Single-column login, stacked cards, horizontal table scroll, stacked action buttons
+
 ## Security
 
-- Passwords are stored using `password_hash()` (bcrypt/argon2). Legacy plain-text passwords are auto-upgraded on first successful login (`aurora_verify_and_maybe_upgrade`).
+- Passwords stored using `password_hash()` (bcrypt/argon2). Legacy plain-text passwords auto-upgraded on first successful login (`aurora_verify_and_maybe_upgrade`).
 - Sessions use hardened cookie flags and are regenerated on login.
 - All forms protect against CSRF via `includes/csrf.php`.
-- All database access uses **prepared statements** via the `aurora_*` helpers — direct interpolation has been removed.
+- All database access uses **prepared statements** via the `aurora_*` helpers — direct interpolation removed.
 - **Login rate-limiting** (`login_attempts` table) blocks brute-force attempts on both member and admin endpoints, with a live countdown UI.
 - Email uniqueness enforced at the DB level (migration `005_database_constraints.sql`).
 - **Note:** Some admin legacy modules that still use string interpolation have been isolated behind `aurora_*` wrappers; do not add new code that bypasses these helpers.
@@ -60,7 +82,7 @@ The system uses a MySQL database named `lms`. Numbered SQL migrations under `dat
 | `004_purchase_requests.sql` | Creates `purchase_requests` (member purchase-suggestion flow) |
 | `005_database_constraints.sql` | Adds UNIQUE indexes on `users.email`, `admins.email`, `books.book_no`, `authors.author_name_lc`, `category.cat_name_lc`; adds RESTRICT foreign keys |
 
-Tables:
+### Core Tables
 
 | Table | Description |
 |---|---|
@@ -70,9 +92,9 @@ Tables:
 | `authors` | Authors (author_id, author_name, author_name_lc) |
 | `category` | Categories (cat_id, cat_name, cat_name_lc) |
 | `issued_books` | Issued books (id, book_no, book_name, book_author, student_id, status, issue_date, due_date, return_date, fine_amount, fine_status) |
-| `book_requests` | Member borrow requests (request_id, user_id, book_id, status, request_date) |
+| `book_requests` | Member borrow requests (request_id, user_id, book_id, status, request_date, due_date) |
 | `purchase_requests` | Member purchase suggestions (purchase_request_id, user_id, book_title, status, created_at) |
-| `login_attempts` | Rate-limit buckets (id, bucket_key, attempts, blocked_until, last_attempt) |
+| `login_attempts` | Rate-limit buckets (id, bucket_key, attempts, first_try_at, blocked_until) |
 
 See `database/README.md` for full migration instructions and pre-flight cleanup recipes.
 
@@ -112,24 +134,24 @@ Library Management System/
 │   └── README.md
 │
 ├── login module/              # Member + admin sign-in
-│   ├── index.php              # Member login
-│   ├── admin_login.php        # Admin login (rate-limited)
+│   ├── index.php              # Member login (premium UI, portal switcher)
+│   ├── admin_login.php        # Admin login (premium UI, portal switcher)
 │   ├── signup.php             # Member registration form
 │   ├── register.php           # Registration handler
 │   └── logout.php
 │
 ├── Admin Dashboard Module/
-│   ├── admin_dashboard.php
-│   ├── functions.php
+│   ├── admin_dashboard.php    # Dark theme dashboard with stats, actions, activity
+│   ├── functions.php          # Admin dashboard helper functions
 │   ├── manage_users.php       # Suspend / reactivate / delete users
 │   ├── user_action.php        # POST handler for user actions
 │   ├── view_user.php
-│   ├── manage_fines.php       # Fine listing + actions
+│   ├── manage_fines.php       # Fine listing + actions (paid/waived/edit)
 │   ├── view_fines.php
 │   ├── update_fine.php
 │   ├── update_fine_status.php
-│   ├── manage_requests.php    # Book requests
-│   ├── respond_request.php
+│   ├── manage_requests.php    # Book requests (approve/decline with validation)
+│   ├── respond_request.php    # Approve/decline handler (atomic transaction)
 │   ├── manage_purchase_requests.php
 │   ├── respond_purchase_request.php
 │   ├── view_issued_book.php
@@ -143,14 +165,14 @@ Library Management System/
 │   └── regusers.php
 │
 ├── dashboardmainpage/         # Member portal
-│   ├── user-dashboard.php
-│   ├── books.php              # Catalog browser
-│   ├── view_issued_book.php
-│   ├── return_book.php
-│   ├── request_book.php
-│   ├── my_requests.php
+│   ├── user-dashboard.php     # Member dashboard with stats, quick actions, feed
+│   ├── books.php              # Catalog browser with search/filters
+│   ├── view_issued_book.php   # My borrowed books with fines
+│   ├── return_book.php        # Self-service return
+│   ├── request_book.php       # Borrow request handler
+│   ├── my_requests.php        # My request history + cancel
 │   ├── cancel_request.php
-│   ├── suggest_book.php
+│   ├── suggest_book.php       # Purchase suggestion form
 │   ├── my_purchase_suggestions.php
 │   ├── my_fines.php
 │   ├── view_profile.php
@@ -179,46 +201,47 @@ Library Management System/
 │   └── issue_book.php
 │
 └── static/
-    ├── css/aurora.css
-    ├── js/aurora.js
+    ├── css/aurora.css         # Complete design system (dark + light themes)
+    ├── js/aurora.js           # Password toggles, sidebar, toasts, countdowns
     └── img/
 ```
 
 ## Installation
 
-1. **Prerequisites**
-   - PHP 7.4 or higher (PHP 8.x recommended)
-   - MySQL 5.7+ / MariaDB 10.3+
-   - A web server (Apache/Nginx) **or** PHP's built-in dev server, **or** XAMPP/WAMP/Laragon
+### Prerequisites
+- PHP 7.4 or higher (PHP 8.x recommended)
+- MySQL 5.7+ / MariaDB 10.3+
+- A web server (Apache/Nginx) **or** PHP's built-in dev server, **or** XAMPP/WAMP/Laragon
 
-2. **Setup**
-   - Place the project in your web server's document root (e.g., `htdocs/lms` for XAMPP, `www/lms` for Laragon).
-   - Create a MySQL database named `lms`.
-   - Apply the numbered migrations in order:
+### Setup
 
-     ```bash
-     # Linux/macOS/WSL
-     ./database/migrate.sh
-     # or manually:
-     mysql -u root -p lms < database/001_security_migration.sql
-     mysql -u root -p lms < database/002_fine_system.sql
-     mysql -u root -p lms < database/003_book_requests.sql
-     mysql -u root -p lms < database/004_purchase_requests.sql
-     mysql -u root -p lms < database/005_database_constraints.sql
-     ```
+1. **Place the project** in your web server's document root (e.g., `htdocs/lms` for XAMPP, `www/lms` for Laragon).
 
-     See `database/README.md` for pre-flight (`000_preflight_duplicates.sql`) and Windows PowerShell instructions.
+2. **Create a MySQL database** named `lms`.
 
-   - Update DB credentials in `config/database.php` (default: `localhost`, `root`, no password, db `lms`).
+3. **Apply the numbered migrations** in order:
 
-3. **Create the first admin**
+   ```bash
+   # Linux/macOS/WSL
+   ./database/migrate.sh
+   # or manually:
+   mysql -u root -p lms < database/001_security_migration.sql
+   mysql -u root -p lms < database/002_fine_system.sql
+   mysql -u root -p lms < database/003_book_requests.sql
+   mysql -u root -p lms < database/004_purchase_requests.sql
+   mysql -u root -p lms < database/005_database_constraints.sql
+   ```
+
+   See `database/README.md` for pre-flight (`000_preflight_duplicates.sql`) and Windows PowerShell instructions.
+
+4. **Update DB credentials** in `config/database.php` (default: `localhost`, `root`, no password, db `lms`).
+
+5. **Create the first admin**
    - Open `http://localhost/lms/create_admin.php` in your browser and follow the form, **or**
    - Run from CLI:
-
      ```bash
      php create_admin.php
      ```
-
    - You can also run `migrate_passwords.php` once to hash any legacy plain-text passwords already in the DB.
 
 ## Usage
@@ -231,12 +254,13 @@ Library Management System/
 
 2. **Member sign-in / sign-up**
    - Navigate to `login module/index.php`
-   - Sign in with an existing account, or click the **Sign up** tab to register
+   - Sign in with an existing account, or use the **Portal Switcher** to go to Admin login
+   - Click **Sign up** tab to register
    - On success you'll be redirected to `dashboardmainpage/user-dashboard.php`
 
 3. **Member self-service**
-   - Browse the catalog (`books.php`)
-   - Request an unavailable book (`request_book.php`)
+   - Browse the catalog (`books.php`) — search, filter by category/author/status
+   - Request an unavailable book (`request_book.php`) — duplicate/active-loan prevention
    - Suggest a new title for the library (`suggest_book.php`)
    - Track requests (`my_requests.php`, `my_purchase_suggestions.php`)
    - View fines and return books (`my_fines.php`, `return_book.php`)
@@ -262,3 +286,4 @@ If `php` is not on PATH, install PHP, XAMPP, or Laragon (see `database/README.md
 - All new code must use the `aurora_*` helpers and `includes/csrf.php` for form tokens.
 - Do **not** commit DB credentials; override `config/database.php` locally.
 - The Aurora UI is intentionally framework-free (no Bootstrap) — keep new styles in `static/css/aurora.css` to stay consistent.
+- **MySQL must be running** — start via XAMPP Control Panel or `mysqld.exe` before testing.
