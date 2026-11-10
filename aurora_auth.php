@@ -136,6 +136,7 @@ if (!function_exists('aurora_login')) {
         // browser fingerprint. Non-strict — changes only force re-login.
         $_SESSION['_ua']  = substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 120);
         $_SESSION['_born']= time();
+        $_SESSION['_last_activity'] = time();
     }
 }
 
@@ -143,10 +144,14 @@ if (!function_exists('aurora_logout')) {
     /**
      * Fully destroy the current session: clear the $_SESSION bag,
      * expire the cookie, and end the server-side storage.
+     * Also clears flash messages and rate-limit data.
      */
     function aurora_logout() {
         aurora_session_start();
         aurora_no_cache_headers();
+
+        // Clear flash messages and rate-limit data before destroying
+        unset($_SESSION['_flash'], $_SESSION['_rl']);
 
         $_SESSION = [];
 
@@ -209,12 +214,24 @@ if (!function_exists('aurora_is_admin')) {
 if (!function_exists('aurora_session_valid')) {
     /**
      * Lightweight integrity check for the current session: verifies
-     * the UA fingerprint hasn't changed (best-effort hijack signal).
+     * the UA fingerprint hasn't changed (best-effort hijack signal)
+     * and checks session inactivity timeout.
      */
     function aurora_session_valid() {
         if (empty($_SESSION['role'])) return false;
         $ua = substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 120);
-        return hash_equals($_SESSION['_ua'] ?? '', $ua);
+        if (!hash_equals($_SESSION['_ua'] ?? '', $ua)) return false;
+
+        // Check inactivity timeout
+        if (isset($_SESSION['_last_activity'])) {
+            $inactive = time() - $_SESSION['_last_activity'];
+            if ($inactive > AURORA_SESSION_TIMEOUT) {
+                return false; // Session expired
+            }
+        }
+        $_SESSION['_last_activity'] = time();
+
+        return true;
     }
 }
 
@@ -306,6 +323,11 @@ if (!function_exists('aurora_require_auth')) {
 /*  for speed, and mirrored to a small `login_attempts` table so that  */
 /*  the limit survives session destruction (logout, manual reset).     */
 /* ------------------------------------------------------------------ */
+
+if (!defined('AURORA_SESSION_TIMEOUT')) {
+    /** Session inactivity timeout in seconds (default: 30 minutes). */
+    define('AURORA_SESSION_TIMEOUT', 30 * 60);
+}
 
 if (!defined('AURORA_RL_MAX'))     define('AURORA_RL_MAX', 5);
 if (!defined('AURORA_RL_WINDOW'))  define('AURORA_RL_WINDOW', 15 * 60); // 15 minutes

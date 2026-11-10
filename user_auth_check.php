@@ -9,7 +9,7 @@
  * Checks (in order):
  *   1. Starts the session with hardened cookie params
  *   2. Sends no-cache headers so Back/Forward cannot serve stale pages
- *   3. Validates the session: role == 'user', id is set, UA fingerprint matches
+ *   3. Validates the session: role == 'user', id is set, UA fingerprint matches, not expired
  *   4. If any check fails → destroys the session, clears the cookie,
  *      and redirects to the member login page
  *
@@ -19,22 +19,17 @@
 
 require_once __DIR__ . '/aurora_auth.php';
 
-/* 1. Start session (idempotent, hardened cookies) */
+/* Start session (idempotent, hardened cookies) */
 aurora_session_start();
 
-/* 2. Prevent ALL browser caching */
+/* Prevent ALL browser caching - redundant with aurora_no_cache_headers but safe */
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 header("Expires: Thu, 01 Jan 1970 00:00:00 GMT");
 
-/* 3. Validate user session */
-$userOk = isset($_SESSION['role'])
-    && $_SESSION['role'] === 'user'
-    && isset($_SESSION['id'])
-    && aurora_session_valid();
-
-if (!$userOk) {
+/* Validate user session using centralized guard */
+if (!aurora_session_valid() || !aurora_is_user()) {
     /* Clear everything so Back/Forward cannot reach a cached page */
     $_SESSION = [];
     if (ini_get("session.use_cookies")) {
@@ -52,8 +47,7 @@ if (!$userOk) {
     session_destroy();
     session_write_close();
 
-    /* Redirect to member login */
-    $redirect = dirname($_SERVER['SCRIPT_NAME']) . '/../login module/index.php';
-    header("Location: " . $redirect);
+    /* Redirect to member login using absolute path */
+    header("Location: /lms/login module/index.php");
     exit();
 }
