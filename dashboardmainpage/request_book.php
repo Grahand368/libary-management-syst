@@ -13,6 +13,9 @@
     require_once __DIR__ . '/../aurora_db.php';
     require_once __DIR__ . '/../aurora_error.php';
 
+    aurora_session_start();
+    aurora_no_cache_headers();
+
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         header('Location: books.php');
         exit;
@@ -63,9 +66,10 @@
         mysqli_stmt_close($stmt);
 
         if (!$book) throw new Exception('Book not found.');
-        // Members may request a book even when stock is zero — the admin
-        // decides whether to waitlist or decline. The hard guard is only
-        // "you already have it issued".
+        // Prevent requesting books with no available copies.
+        if ((int)$book['book_qty'] <= 0) {
+            throw new Exception('This book is out of stock and cannot be requested.');
+        }
 
         // 2. Refuse if user already has this book issued.
         $stmt = mysqli_prepare(
