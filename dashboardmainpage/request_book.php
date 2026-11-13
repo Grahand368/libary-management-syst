@@ -1,13 +1,13 @@
 <?php
-    /**
-     * Aurora Library — Member: Submit Book Request
-     *
-     * POST only, CSRF protected. Creates a Pending request for the
-     * currently signed-in member. Refuses if:
-     *   - book doesn't exist / isn't available
-     *   - the member already has a Pending request for the same book
-     *   - the member already has this book issued (status=1)
-     */
+/**
+ * Aurora Library — Member: Submit Book Request
+ *
+ * POST only, CSRF protected. Creates a Pending request for the
+ * currently signed-in member. Refuses if:
+ *   - book doesn't exist / isn't available
+ *   - the member already has a Pending request for the same book
+ *   - the member already has this book issued (status=1)
+ */
 
     require_once __DIR__ . '/../aurora_auth.php';
     require_once __DIR__ . '/../aurora_db.php';
@@ -20,11 +20,32 @@
         header('Location: books.php');
         exit;
     }
-    require_once __DIR__ . '/../user_auth_check.php';
 
+    // ── Validate user session ──
+    if (!aurora_session_valid() || !aurora_is_user()) {
+        $_SESSION = [];
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                "",
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
+            );
+        }
+        session_destroy();
+        session_write_close();
+        header("Location: ../login module/index.php");
+        exit;
+    }
+
+    // ── CSRF check ──
     $token = $_POST['csrf_token'] ?? '';
     if (!aurora_csrf_check($token)) {
-        $_SESSION['_flash'] = ['type' => 'error', 'msg' => 'Invalid security token.'];
+        $_SESSION['_flash'] = ['type' => 'error', 'msg' => 'Invalid security token. Please try again.'];
         header('Location: books.php');
         exit;
     }
@@ -84,7 +105,6 @@
         if ($existingIssue) throw new Exception('You currently have this book issued.');
 
         // 3. Refuse duplicate ACTIVE request (Pending OR Approved).
-        //    Declined/Cancelled are terminal — a fresh request is allowed.
         $stmt = mysqli_prepare(
             $conn,
             "SELECT request_id, status FROM book_requests
@@ -119,7 +139,6 @@
         $ok = true;
     } catch (Throwable $e) {
         mysqli_rollback($conn);
-        // Log the real cause in dev; show a safe message to the user.
         aurora_log_error('request_book', $e);
         $err = aurora_user_facing_error();
     }
